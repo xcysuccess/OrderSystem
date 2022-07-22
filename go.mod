@@ -1,4 +1,4 @@
-module OrderSystem
+module ordersystem
 
 go 1.17
 

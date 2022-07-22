@@ -18,4 +18,4 @@ EXPOSE 8000
 WORKDIR /go/src
 
 #最终运行docker的命令
-CMD ["./OrderSystem"]
+CMD ["./ordersystem"]
