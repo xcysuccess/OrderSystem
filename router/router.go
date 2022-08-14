@@ -4,6 +4,7 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"ordersystem/handler"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,10 +14,19 @@ import (
 func SetupRouter() *gin.Engine {
 	// 1.创建路由
 	router := gin.Default()
-	// 2.绑定路由规则，执行的函数
-	router.GET("/", retHelloGinAndMethod)
-	router.POST("/", retHelloGinAndMethod)
+	index := router.Group("/")
+	{
+		// 2.绑定路由规则，执行的函数
+		// index.GET("", retHelloGinAndMethod)
+		// index.POST("", retHelloGinAndMethod)
+		index.Any("", retHelloGinAndMethod)
 
+	}
+	user := router.Group("/user")
+	{
+		user.GET("/:name", handler.UserSave)
+		user.GET("/", handler.UserSaveNameByQuery)
+	}
 	return router
 }
 
