@@ -4,7 +4,7 @@ package router
 import (
 	"fmt"
 	"net/http"
-	"ordersystem/handler"
+	"ordersystem/service"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,33 +14,33 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 	// 1.配置HTML
-	// initHTMLConfig(router)
+	initHTMLConfig(router)
+	// 2.创建路由
+	indexRouter := router.Group("/")
+	// 2.1 绑定路由规则，执行的函数
+	// index.GET("", retHelloGinAndMethod)
+	// index.POST("", retHelloGinAndMethod)
+	indexRouter.Any("", service.Index)
+
+	userRouter := router.Group("/user")
+	userRouter.GET("/:name", service.UserSave)
+	userRouter.GET("/", service.UserSaveNameByQuery)
+
+	return router
+}
+
+func initHTMLConfig(router *gin.Engine) {
+	// 1.配置网页路径
 	if mode := gin.Mode(); mode == gin.TestMode {
 		router.LoadHTMLGlob("./../templates/*")
 	} else {
 		router.LoadHTMLGlob("templates/*")
 	}
-	// 2.创建路由
-	indexRouter := router.Group("/")
-	// 2.绑定路由规则，执行的函数
-	// index.GET("", retHelloGinAndMethod)
-	// index.POST("", retHelloGinAndMethod)
-	indexRouter.Any("", retHelloGinAndMethod)
-
-	userRouter := router.Group("/user")
-	userRouter.GET("/:name", handler.UserSave)
-	userRouter.GET("/", handler.UserSaveNameByQuery)
-
-	return router
+	// 2.配置css和js路径
+	router.Static("/statics", "./statics")
+	// 2.1 加载图标
+	router.StaticFile("/favicon.ico", "./favicon.ico")
 }
-
-// func initHTMLConfig(router *gin.Engine) {
-//	if mode := gin.Mode(); mode == gin.TestMode {
-//		router.LoadHTMLGlob("./../templates/*")
-//	} else {
-//		router.LoadHTMLGlob("templates/*")
-//	}
-// }
 
 // retHelloGinAndMethod 封装了request和response
 // gin.Context

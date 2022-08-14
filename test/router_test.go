@@ -10,27 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var g_router *gin.Engine
+var gRouter *gin.Engine
 
 func init() {
 	gin.SetMode(gin.TestMode)
-	g_router = router.SetupRouter()
+	gRouter = router.SetupRouter()
 }
 
 // http://localhost:8000
-func TestIndexGetRouter(t *testing.T) {
+func TestIndexRouter(t *testing.T) {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	g_router.ServeHTTP(w, req)
+	gRouter.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "hello gin get method", w.Body.String())
-}
-
-// http://localhost:8000
-func TestIndexPostRouter(t *testing.T) {
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/", nil)
-	g_router.ServeHTTP(w, req)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "hello gin post method", w.Body.String())
+	assert.Contains(t, w.Body.String(), "hello gin get method", "返回的HTML页面中应该包含 hello gin get method")
 }
