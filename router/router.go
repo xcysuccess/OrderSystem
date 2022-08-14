@@ -17,11 +17,6 @@ func SetupRouter() *gin.Engine {
 	router.GET("/", retHelloGinAndMethod)
 	router.POST("/", retHelloGinAndMethod)
 
-	// gin.Context，封装了request和response
-	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "hello World!")
-	})
-
 	return router
 }
 
