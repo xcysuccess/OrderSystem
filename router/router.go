@@ -17,29 +17,32 @@ func SetupRouter() *gin.Engine {
 	initHTMLConfig(router)
 	// 2.创建路由
 	indexRouter := router.Group("/")
-	// 2.1 绑定路由规则，执行的函数
-	// index.GET("", retHelloGinAndMethod)
-	// index.POST("", retHelloGinAndMethod)
-	indexRouter.Any("", service.Index)
-
+	{
+		// 2.1 绑定路由规则，执行的函数
+		// index.GET("", retHelloGinAndMethod)
+		// index.POST("", retHelloGinAndMethod)
+		indexRouter.Any("", service.Index)
+	}
 	userRouter := router.Group("/user")
-	userRouter.GET("/:name", service.UserSave)
-	userRouter.GET("/", service.UserSaveNameByQuery)
-
+	{
+		userRouter.GET("/:name", service.UserSave)
+		userRouter.GET("/", service.UserSaveNameByQuery)
+		userRouter.POST("/register", service.UserRegister)
+	}
 	return router
 }
 
 func initHTMLConfig(router *gin.Engine) {
 	// 1.配置网页路径
 	if mode := gin.Mode(); mode == gin.TestMode {
-		router.LoadHTMLGlob("./../templates/*")
+		router.LoadHTMLGlob("./../frontdev/templates/*")
 	} else {
-		router.LoadHTMLGlob("templates/*")
+		router.LoadHTMLGlob("./frontdev/templates/*")
 	}
 	// 2.配置css和js路径
-	router.Static("/statics", "./statics")
+	router.Static("/bootstrap", "./frontdev")
 	// 2.1 加载图标
-	router.StaticFile("/favicon.ico", "./favicon.ico")
+	router.StaticFile("/favicon.ico", "./frontdev/images/favicon.ico")
 }
 
 // retHelloGinAndMethod 封装了request和response
