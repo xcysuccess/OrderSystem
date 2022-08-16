@@ -25,14 +25,32 @@ func UserSaveNameByQuery(context *gin.Context) {
 func UserRegister(context *gin.Context) {
 	var user dao.UserModel
 	if err := context.ShouldBind(&user); err != nil {
+		context.String(http.StatusBadRequest, "输入的数据不合法")
 		log.Println("err -->", err.Error())
-		return
-	} else {
-		log.Println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
+	}
+	passwordAgain := context.PostForm("password-again")
+	if passwordAgain != user.Password {
+		context.String(http.StatusBadRequest, "密码校验无效，两次密码不一致")
+		log.Panicln("密码校验无效，两次密码不一致")
+	}
+	id := user.Save()
+	log.Println("id is ", id)
+	context.Redirect(http.StatusMovedPermanently, "/")
+}
+
+// UserLogin 用户登陆
+func UserLogin(context *gin.Context) {
+	var user dao.UserModel
+	if err := context.ShouldBind(&user); err != nil {
+		log.Panicln("login 绑定错误", err.Error())
+	}
+	u := user.QueryByEmail()
+	println("u.password ** user.password", u.Password, user.Password)
+	if user.Password == u.Password {
+		log.Println("登陆成功！")
+		// context.HTML(http.StatusOK, "index.tmpl", gin.H{
+		//	"email": u.Email,
+		// })
 		context.Redirect(http.StatusMovedPermanently, "/")
 	}
-	// email := context.PostForm("email")
-	// password := context.DefaultPostForm("password", "123456")
-	// passwordAgain := context.DefaultPostForm("password-again", "123456")
-	// fmt.Println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
 }
