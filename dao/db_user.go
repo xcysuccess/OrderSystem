@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -10,9 +11,10 @@ import (
 
 // UserModel SqlX框架去做数据分类
 type UserModel struct {
-	Id       int    `db:"id" form:"id"`
-	Email    string `db:"email" form:"email" binding:"email"`
-	Password string `db:"password"  form:"password"`
+	Id       int            `db:"id"`
+	Email    string         `db:"email" form:"email" binding:"email"`
+	Password string         `db:"password" form:"password"`
+	Avatar   sql.NullString `db:"avatar"`
 }
 
 var db_sqlx *sqlx.DB
@@ -53,7 +55,7 @@ func (user *UserModel) Save() int64 {
 	return id
 }
 
-// QueryByEmail 查询单条数据示例
+// QueryByEmail 根据email查询单条数据
 func (user *UserModel) QueryByEmail() UserModel {
 	u := UserModel{}
 	sqlStr := "select * from ginhello.user where email = ?"
@@ -65,6 +67,18 @@ func (user *UserModel) QueryByEmail() UserModel {
 	return u
 }
 
+// QueryById 根据id查询单条数据
+func (user *UserModel) QueryById(id int) (UserModel, error) {
+	u := UserModel{}
+	sqlStr := "select * from ginhello.user where id = ?"
+	err := db_sqlx.Get(&u, sqlStr, id)
+	if err != nil {
+		log.Printf("get failed, err:%v\n", err)
+		log.Panicln(err)
+	}
+	return u, err
+}
+
 // User_Sqlx TODO
 type User_Sqlx struct {
 	UserId   int    `db:"id"`
@@ -72,8 +86,7 @@ type User_Sqlx struct {
 	Password string `db:"password"`
 }
 
-// QueryRow TODO
-// QueryByEmail 查询单条数据示例
+// QueryRow TODO:测试使用
 func QueryRow() {
 	u := UserModel{}
 	// sqlStr := "select * from ginhello.user"

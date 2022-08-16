@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"ordersystem/dao"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,12 +46,29 @@ func UserLogin(context *gin.Context) {
 		log.Panicln("login 绑定错误", err.Error())
 	}
 	u := user.QueryByEmail()
-	println("u.password ** user.password", u.Password, user.Password)
+	log.Println("u.password ** user.password", u.Password, user.Password)
 	if user.Password == u.Password {
 		log.Println("登陆成功！")
 		// context.HTML(http.StatusOK, "index.tmpl", gin.H{
 		//	"email": u.Email,
 		// })
 		context.Redirect(http.StatusMovedPermanently, "/")
+	}
+}
+
+// UserProfile 获取用户信息
+func UserProfile(context *gin.Context) {
+	id := context.Query("id")
+	var user dao.UserModel
+	i, err := strconv.Atoi(id)
+	u, e := user.QueryById(i)
+	if e != nil || err != nil {
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+	} else {
+		context.HTML(http.StatusOK, "user_profile.tmpl", gin.H{
+			"user": u,
+		})
 	}
 }
