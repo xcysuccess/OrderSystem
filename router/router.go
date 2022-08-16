@@ -25,7 +25,7 @@ func SetupRouter() *gin.Engine {
 	// avatar
 	router.StaticFS("/avatar", http.Dir(filepath.Join(common.RootPath(), "avatar")))
 
-	// 2.创建路由
+	// 2.创建路由index
 	indexRouter := router.Group("/")
 	{
 		indexRouter.Any("", service.Index)
