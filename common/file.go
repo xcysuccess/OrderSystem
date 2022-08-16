@@ -4,6 +4,7 @@ package common
 import (
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -26,4 +27,15 @@ func getCurrentAbPathByExecutable() string {
 	}
 	res, _ := filepath.EvalSymlinks(filepath.Dir(exePath))
 	return res
+}
+
+// RootPath 获取RootPath
+func RootPath() string {
+	s, err := exec.LookPath(os.Args[0])
+	if err != nil {
+		log.Panicln("发生错误", err.Error())
+	}
+	i := strings.LastIndex(s, "\\")
+	path := s[0 : i+1]
+	return path
 }

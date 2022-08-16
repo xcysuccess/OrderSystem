@@ -2,8 +2,10 @@
 package router
 
 import (
+	"net/http"
 	"ordersystem/common"
 	"ordersystem/service"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +20,11 @@ func SetupRouter() *gin.Engine {
 		router.LoadHTMLGlob(common.GetCurrentAbPath() + "/frontdev/templates/*")
 	}
 	router.Static("/bootstrap", "./frontdev/bootstrap")
+	// /Users/tomxiang/github/ordersystem/frontdev/images/favicon.ico
 	router.StaticFile("/favicon.ico", common.GetCurrentAbPath()+"/frontdev/images/favicon.ico")
+	// avatar
+	router.StaticFS("/avatar", http.Dir(filepath.Join(common.RootPath(), "avatar")))
+
 	// 2.创建路由
 	indexRouter := router.Group("/")
 	{
@@ -30,6 +36,7 @@ func SetupRouter() *gin.Engine {
 		userRouter.GET("/:name", service.UserSave)
 		userRouter.GET("/", service.UserSaveNameByQuery)
 		userRouter.GET("/profile/", service.UserProfile)
+		userRouter.POST("/update", service.UpdateUserProfile)
 		userRouter.POST("/register", service.UserRegister)
 		userRouter.POST("/login", service.UserLogin)
 	}

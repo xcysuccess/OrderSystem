@@ -11,7 +11,7 @@ import (
 
 // UserModel SqlX框架去做数据分类
 type UserModel struct {
-	Id       int            `db:"id"`
+	Id       int            `db:"id" form:"id"`
 	Email    string         `db:"email" form:"email" binding:"email"`
 	Password string         `db:"password" form:"password"`
 	Avatar   sql.NullString `db:"avatar"`
@@ -77,6 +77,15 @@ func (user *UserModel) QueryById(id int) (UserModel, error) {
 		log.Panicln(err)
 	}
 	return u, err
+}
+
+// Update 根据id更新数据表
+func (user *UserModel) Update(id int) error {
+	_, err := db_sqlx.Exec("update user set password=?,avatar=? where id=?", user.Password, user.Avatar.String, id)
+	if err != nil {
+		log.Printf("get failed, err:%v\n", err)
+	}
+	return err
 }
 
 // User_Sqlx TODO
