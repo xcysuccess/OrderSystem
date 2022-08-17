@@ -4,6 +4,7 @@ package router
 import (
 	"net/http"
 	"ordersystem/common"
+	"ordersystem/middleware"
 	"ordersystem/service"
 	"path/filepath"
 
@@ -12,16 +13,19 @@ import (
 
 // SetupRouter 初始化路由
 func SetupRouter() *gin.Engine {
-	router := gin.Default()
+	// router := gin.Default()
+	router := gin.New()
+	router.Use(middleware.Logger(), gin.Recovery())
 	// 1.配置网页
 	if mode := gin.Mode(); mode == gin.TestMode {
-		router.LoadHTMLGlob("./../frontdev/templates/*")
+		router.LoadHTMLGlob("./../templates/*")
 	} else {
-		router.LoadHTMLGlob(common.GetCurrentAbPath() + "/frontdev/templates/*")
+		router.LoadHTMLGlob(common.GetCurrentAbPath() + "/templates/*")
 	}
-	router.Static("/bootstrap", "./frontdev/bootstrap")
-	// /Users/tomxiang/github/ordersystem/frontdev/images/favicon.ico
-	router.StaticFile("/favicon.ico", common.GetCurrentAbPath()+"/frontdev/images/favicon.ico")
+	router.Static("/statics", common.GetCurrentAbPath()+"/statics")
+	// /Users/tomxiang/github/ordersystem/favicon.ico
+	router.StaticFile("/favicon.ico", common.GetCurrentAbPath()+"/favicon.ico")
+
 	// avatar
 	router.StaticFS("/avatar", http.Dir(filepath.Join(common.RootPath(), "avatar")))
 
@@ -35,8 +39,8 @@ func SetupRouter() *gin.Engine {
 	{
 		userRouter.GET("/:name", service.UserSave)
 		userRouter.GET("/", service.UserSaveNameByQuery)
-		userRouter.GET("/profile/", service.UserProfile)
-		userRouter.POST("/update", service.UpdateUserProfile)
+		userRouter.GET("/profile/", middleware.Auth(), service.UserProfile)
+		userRouter.POST("/update", middleware.Auth(), service.UpdateUserProfile)
 		userRouter.POST("/register", service.UserRegister)
 		userRouter.POST("/login", service.UserLogin)
 	}

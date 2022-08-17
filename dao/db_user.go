@@ -2,7 +2,6 @@ package dao
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql" // mysql TODO
@@ -25,10 +24,10 @@ func ConnectSqlxDatabases() {
 	db_sqlx, err = sqlx.Connect("mysql", "root:Xcy3329257@(localhost)/ginhello?charset=utf8mb4&parseTime=True&loc=Local")
 
 	if err != nil {
-		fmt.Printf("connect DB failed, err:%v\n", err)
+		log.Printf("connect DB failed, err:%v\n", err)
 		return
 	}
-	println("sqlx数据库连接接成功")
+	log.Println("sqlx数据库连接接成功")
 }
 
 // CloseSqlxDatabases TODO
