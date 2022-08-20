@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,13 @@ func Logger() gin.HandlerFunc {
 // Auth 是否授权
 func Auth() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		println("已经授权")
-		context.Next()
+		cookie, error := context.Request.Cookie("user_cookie")
+		if error == nil {
+			context.SetCookie(cookie.Name, cookie.Value, 1000, cookie.Path, cookie.Domain, cookie.Secure, cookie.HttpOnly)
+			context.Next()
+		} else {
+			context.Abort()
+			context.HTML(http.StatusUnauthorized, "401.tmpl", nil)
+		}
 	}
 }

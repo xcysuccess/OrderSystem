@@ -53,6 +53,13 @@ func UserLogin(context *gin.Context) {
 	u := user.QueryByEmail()
 	if user.Password == u.Password {
 		log.Println("登录成功", u.Email)
+		// 给客户端设置cookie
+		// maxAge int,单位 s
+		// path cookie  所在目录
+		// domain string  域名
+		// secure  是否只能通过https访问
+		// httponly bool  是否允许别人通过Js获取自己的cookie
+		context.SetCookie("user_cookie", string(u.Id), 1000, "/", "localhost", false, true)
 		context.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"email": u.Email,
 			"id":    u.Id,
